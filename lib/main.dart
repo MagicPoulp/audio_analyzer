@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:audio_analyzer/AudioAnalyzer.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(AudioAnalyzerApp());
 }
 
-class MyApp extends StatelessWidget {
+class AudioAnalyzerApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -51,8 +52,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  AudioAnalyzer _audioAnalyzer = new AudioAnalyzer();
 
   void _incrementCounter() {
+
+    _audioAnalyzer.start();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

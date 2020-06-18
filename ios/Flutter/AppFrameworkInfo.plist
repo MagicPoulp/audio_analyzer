@@ -22,5 +22,7 @@
   <string>1.0</string>
   <key>MinimumOSVersion</key>
   <string>8.0</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Can We Use Your Microphone Please</string>
 </dict>
 </plist>
