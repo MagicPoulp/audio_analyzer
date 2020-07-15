@@ -52,4 +52,8 @@ class AudioAnalyzer {
 
         _assetsAudioPlayer.play();
     }
+
+    analyze() async {
+
+    }
 }
