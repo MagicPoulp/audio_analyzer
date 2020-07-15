@@ -54,8 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   AudioAnalyzer _audioAnalyzer = new AudioAnalyzer();
 
-  void _incrementCounter() {
-
+  void _start() {
     _audioAnalyzer.start();
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -65,6 +64,14 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  void _stop() {
+    _audioAnalyzer.stop();
+  }
+
+  void _play() {
+    _audioAnalyzer.play();
   }
 
   @override
@@ -108,14 +115,21 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            new RaisedButton(
+              onPressed: _start,
+              child: new Text('Start'),
+            ),
+            new RaisedButton(
+              onPressed: _stop,
+              child: new Text('Stop'),
+            ),
+            new RaisedButton(
+              onPressed: _play,
+              child: new Text('Play'),
+            ),
           ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
