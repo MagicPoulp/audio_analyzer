@@ -1,5 +1,6 @@
 import 'package:path/path.dart' as path;
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audio_recorder
@@ -12,10 +13,16 @@ class AudioAnalyzer {
     var _file;
     var _assetsAudioPlayer;
 
-    start() async {
+    makeFile() async {
         final directory = await getApplicationDocumentsDirectory();
         final appPath = directory.path;
         _file = path.join(appPath, 'audio_analyzer_record.wav');
+    }
+
+    start() async {
+        if (_file == null) {
+            await makeFile();
+        }
 
         bool hasPermission = await FlutterAudioRecorder.hasPermissions;
 
@@ -54,7 +61,27 @@ class AudioAnalyzer {
         _assetsAudioPlayer.play();
     }
 
-    analyze() async {
+    // In the README, we have an adb command to download the wav
+    // the we can parse the header in python
+    // python wav parser
+    // https://gist.github.com/eerwitt/ba51e181d50de6555a2ae613a558c0b6
+    // the WAV
+    // http://soundfile.sapp.org/doc/WaveFormat/
+    // http://www.topherlee.com/software/pcm-tut-wavformat.html
 
+    // windowing makes a more periodic signal
+    // https://download.ni.com/evaluation/pxi/Understanding%20FFTs%20and%20Windowing.pdf
+    analyze() async {
+        if (_file == null) {
+            await makeFile();
+        }
+
+        // the header has 44 bytes, which makes 22 16-bit integers
+        // we know each byte has 2 bytes
+        Uint8List bytes = await new File(_file).readAsBytes();
+        ByteBuffer buffer = bytes.buffer;
+        var samplesOn2Bytes = buffer.asUint16List().skip(22);
+        List<int> samples = new List<int>.from(samplesOn2Bytes);
+        var temp = 1;
     }
 }
