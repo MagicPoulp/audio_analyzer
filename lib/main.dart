@@ -1,3 +1,4 @@
+import 'package:audio_analyzer/FftPlotScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_analyzer/AudioAnalyzer.dart';
 
@@ -10,7 +11,7 @@ class AudioAnalyzerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Audio analyzer',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -27,7 +28,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Record'),
     );
   }
 }
@@ -74,8 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _audioAnalyzer.play();
   }
 
-  void _analyze() {
-    _audioAnalyzer.analyze();
+  void _analyze() async {
+    List<double> fftAmplitudes = await _audioAnalyzer.analyze();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes)),
+    );
   }
 
   @override
