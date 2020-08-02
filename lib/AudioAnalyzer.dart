@@ -9,6 +9,7 @@ import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:fft/fft.dart';
+// another more powerful library could be used: smart_signal_processing
 
 class AudioAnalyzer {
 
@@ -43,7 +44,7 @@ class AudioAnalyzer {
         // the octave 9 is not reachable with 16K as sample rate
         // And the human ear can hear up to 20KHz
         // https://www.sciencedirect.com/topics/engineering/nyquist-theorem
-        _recorder = FlutterAudioRecorder(_file, audioFormat: AudioFormat.WAV, sampleRate: 48000);
+        _recorder = FlutterAudioRecorder(_file, audioFormat: AudioFormat.WAV, sampleRate: 16000);
         await _recorder.initialized;
 
         await _recorder.start();
@@ -99,9 +100,13 @@ class AudioAnalyzer {
         int extra = (lengthBytes - powerOf2) ~/ 2;
 
         ByteBuffer buffer = bytes.buffer;
-        var samplesOn2Bytes = buffer.asUint16List().skip(22 + extra);
+        // 16-bit samples are stored as 2's-complement signed integers, ranging from -32768 to 32767.
+        // http://soundfile.sapp.org/doc/WaveFormat/
+        var samplesOn2Bytes = buffer.asInt16List().skip(22 + extra);
         List<int> samples = new List<int>.from(samplesOn2Bytes);
 
+        // a window function is necessary because the sample is not-periodic
+        // but we can make it periodic
         var windowPackage = new Window(WindowType.HANN);
         var window = windowPackage.apply(samples);
         var fft = new FFT().Transform(window);
