@@ -1,11 +1,14 @@
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:math';
+import 'dart:core';
 
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audio_recorder
 import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:fft/fft.dart';
 
 class AudioAnalyzer {
 
@@ -79,9 +82,19 @@ class AudioAnalyzer {
         // the header has 44 bytes, which makes 22 16-bit integers
         // we know each byte has 2 bytes
         Uint8List bytes = await new File(_file).readAsBytes();
+        int lengthBytes = bytes.length - 44;
+        // the Hann function wants a sample with size equal to a power of 2
+        // https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2/24844826
+        var powerOf2 = pow(2, (log(lengthBytes)/log(2)).ceil())/2;
+        int extra = (lengthBytes - powerOf2) ~/ 2;
+
         ByteBuffer buffer = bytes.buffer;
-        var samplesOn2Bytes = buffer.asUint16List().skip(22);
+        var samplesOn2Bytes = buffer.asUint16List().skip(22 + extra);
         List<int> samples = new List<int>.from(samplesOn2Bytes);
+
+        var windowPackage = new Window(WindowType.HANN);
+        var window = windowPackage.apply(samples);
+        var fft = new FFT().Transform(window);
         var temp = 1;
     }
 }
