@@ -26,7 +26,8 @@ class AudioAnalyzer {
         var file = File(_file);
         file.delete();
         // https://pub.dev/packages/flutter_audio_recorder
-        _recorder = FlutterAudioRecorder(_file, audioFormat: AudioFormat.WAV, sampleRate: 16000);
+        // https://developer.android.com/ndk/guides/audio/sampling-audio
+        _recorder = FlutterAudioRecorder(_file, audioFormat: AudioFormat.WAV, sampleRate: 48000);
         await _recorder.initialized;
 
         await _recorder.start();
