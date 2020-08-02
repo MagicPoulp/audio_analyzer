@@ -37,6 +37,12 @@ class AudioAnalyzer {
         file.delete();
         // https://pub.dev/packages/flutter_audio_recorder
         // https://developer.android.com/ndk/guides/audio/sampling-audio
+        // 48 can be used for high notes.
+        // A sample rate of 16K is enough based on the Nyquist-Shanonn theroem
+        // see here a table: https://en.wikipedia.org/wiki/Scientific_pitch_notation
+        // the octave 9 is not reachable with 16K as sample rate
+        // And the human ear can hear up to 20KHz
+        // https://www.sciencedirect.com/topics/engineering/nyquist-theorem
         _recorder = FlutterAudioRecorder(_file, audioFormat: AudioFormat.WAV, sampleRate: 48000);
         await _recorder.initialized;
 
@@ -64,6 +70,14 @@ class AudioAnalyzer {
         _assetsAudioPlayer.play();
     }
 
+
+    analyze() async {
+        if (_file == null) {
+            await makeFile();
+        }
+        var fft = await computeFFT();
+    }
+
     // In the README, we have an adb command to download the wav
     // the we can parse the header in python
     // python wav parser
@@ -74,11 +88,7 @@ class AudioAnalyzer {
 
     // windowing makes a more periodic signal
     // https://download.ni.com/evaluation/pxi/Understanding%20FFTs%20and%20Windowing.pdf
-    analyze() async {
-        if (_file == null) {
-            await makeFile();
-        }
-
+    computeFFT() async {
         // the header has 44 bytes, which makes 22 16-bit integers
         // we know each byte has 2 bytes
         Uint8List bytes = await new File(_file).readAsBytes();
@@ -95,6 +105,10 @@ class AudioAnalyzer {
         var windowPackage = new Window(WindowType.HANN);
         var window = windowPackage.apply(samples);
         var fft = new FFT().Transform(window);
-        var temp = 1;
+        return fft;
     }
+
+    // "In an fft frequency plot, the highest frequency is the sampling frequency fs and the lowest frequency is fs/N where N is the number of fft points. "
+    // https://www.researchgate.net/post/How_can_I_define_the_frequency_resolution_in_FFT_And_what_is_the_difference_on_interpreting_the_results_between_high_and_low_frequency_resolution
+    // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
 }
