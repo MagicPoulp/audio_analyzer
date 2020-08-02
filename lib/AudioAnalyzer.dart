@@ -81,7 +81,7 @@ class AudioAnalyzer {
             await makeFile();
         }
         var fft = await computeFFT();
-        var amplitudes = await makeFrequencyArrays(fft);
+        List<double> amplitudes = await makeFrequencyArrays(fft);
         return amplitudes;
     }
 
@@ -127,12 +127,13 @@ class AudioAnalyzer {
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
 
     makeFrequencyArrays(fft) async {
-        var amplitudes = new List(fft.length);
+        List<double> amplitudes = new List(fft.length);
         for( var i = 0 ; i  < fft.length; i++) {
             Complex v = fft[i];
             // https://en.wikipedia.org/wiki/Complex_number
             //var phase = atan2(v.imaginary, v.real);
-            amplitudes[i] = v.modulus;
+            amplitudes[i] = v.modulus as double;
         }
+        return amplitudes;
     }
 }

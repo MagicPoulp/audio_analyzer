@@ -27,20 +27,14 @@ class SimpleScatterPlotChart extends StatelessWidget {
   SimpleScatterPlotChart(this.seriesList, {this.animate,});
 
   factory SimpleScatterPlotChart.withFftAmplitudes(fftAmplitudes) {
-    final random = new Random();
-    final data = [
-      new LinearSales(1, 2, 10.1),
-    ];
-
-    List<charts.Series<LinearSales, String>> series = [new charts.Series<LinearSales, String>(
-      id: 'Sales',
-      colorFn: (LinearSales sales, _) {
+    List<charts.Series<num, String>> series = [new charts.Series<num, String>(
+      id: '',
+      colorFn: (amplitude, _) {
         return charts.MaterialPalette.green.shadeDefault;
       },
-      domainFn: (LinearSales sales, _) => 'sales.year',
-      measureFn: (LinearSales sales, _) => sales.sales,
-      radiusPxFn: (LinearSales sales, _) => sales.radius,
-      data: data,
+      domainFn: (amplitude, i) => i.toString(),
+      measureFn: (num amplitude, _) => amplitude,
+      data: [1.1, 2.2, 3.3],
     )];
 
     return new SimpleScatterPlotChart(

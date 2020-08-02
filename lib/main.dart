@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _analyze() async {
-    var fftAmplitudes = await _audioAnalyzer.analyze();
+    List<double> fftAmplitudes = await _audioAnalyzer.analyze();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes)),
