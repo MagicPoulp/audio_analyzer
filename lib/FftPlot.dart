@@ -27,14 +27,15 @@ class SimpleScatterPlotChart extends StatelessWidget {
   SimpleScatterPlotChart(this.seriesList, {this.animate,});
 
   factory SimpleScatterPlotChart.withFftAmplitudes(fftAmplitudes) {
-    List<charts.Series<num, String>> series = [new charts.Series<num, String>(
+    List<charts.Series<num, num>> series = [new charts.Series<num, num>(
       id: '',
-      colorFn: (amplitude, _) {
+      colorFn: (_amplitude, _) {
         return charts.MaterialPalette.green.shadeDefault;
       },
-      domainFn: (amplitude, i) => i.toString(),
+      domainFn: (_amplitude, i) => i,
       measureFn: (num amplitude, _) => amplitude,
-      data: [1.1, 2.2, 3.3],
+      //data: [1.1, 2.2, 3.3],
+      data: fftAmplitudes,
     )];
 
     return new SimpleScatterPlotChart(
@@ -109,7 +110,7 @@ class SimpleScatterPlotChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new charts.BarChart(seriesList, animate: animate);
+    return new charts.LineChart(seriesList, animate: animate);
   }
 
   /// Create one series with sample hard coded data.
