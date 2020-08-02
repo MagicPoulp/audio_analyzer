@@ -119,7 +119,8 @@ class AudioAnalyzer {
         // "An example of apodization is the use of the Hann window in the fast Fourier transform analyzer to smooth the discontinuities at the beginning and end of the sampled time record. "
         // https://en.wikipedia.org/wiki/Apodization
         var windowPackage = new Window(WindowType.HANN);
-        var window = windowPackage.apply(samples);
+        //var window = windowPackage.apply(samples);
+        var window = samples;
         var fft = new FFT().Transform(window);
         return fft;
     }
