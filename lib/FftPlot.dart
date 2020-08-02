@@ -24,7 +24,31 @@ class SimpleScatterPlotChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;
 
-  SimpleScatterPlotChart(this.seriesList, {this.animate});
+  SimpleScatterPlotChart(this.seriesList, {this.animate,});
+
+  factory SimpleScatterPlotChart.withFftAmplitudes(fftAmplitudes) {
+    final random = new Random();
+    final data = [
+      new LinearSales(1, 2, 10.1),
+    ];
+
+    List<charts.Series<LinearSales, String>> series = [new charts.Series<LinearSales, String>(
+      id: 'Sales',
+      colorFn: (LinearSales sales, _) {
+        return charts.MaterialPalette.green.shadeDefault;
+      },
+      domainFn: (LinearSales sales, _) => 'sales.year',
+      measureFn: (LinearSales sales, _) => sales.sales,
+      radiusPxFn: (LinearSales sales, _) => sales.radius,
+      data: data,
+    )];
+
+    return new SimpleScatterPlotChart(
+      series,
+      // Disable animations for image tests.
+      animate: false,
+    );
+  }
 
   /// Creates a [ScatterPlotChart] with sample data and no transition.
   factory SimpleScatterPlotChart.withSampleData() {
@@ -83,7 +107,6 @@ class SimpleScatterPlotChart extends StatelessWidget {
         },
         domainFn: (LinearSales sales, _) => sales.year,
         measureFn: (LinearSales sales, _) => sales.sales,
-        radiusPxFn: (LinearSales sales, _) => sales.radius,
         data: data,
       )
     ];
@@ -92,7 +115,7 @@ class SimpleScatterPlotChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new charts.ScatterPlotChart(seriesList, animate: animate);
+    return new charts.BarChart(seriesList, animate: animate);
   }
 
   /// Create one series with sample hard coded data.
