@@ -81,7 +81,7 @@ class AudioAnalyzer {
             await makeFile();
         }
         var fft = await computeFFT();
-        List<double> amplitudes = await makeFrequencyArrays(fft);
+        List<double> amplitudes = await makeAmplitudes(fft);
         return amplitudes;
     }
 
@@ -108,6 +108,8 @@ class AudioAnalyzer {
         ByteBuffer buffer = bytes.buffer;
         // 16-bit samples are stored as 2's-complement signed integers, ranging from -32768 to 32767.
         // http://soundfile.sapp.org/doc/WaveFormat/
+        // 22 is removed for the header
+        // extra is removed to have a power of 2.
         var samplesOn2Bytes = buffer.asInt16List().skip(22 + extra);
         List<int> samples = new List<int>.from(samplesOn2Bytes);
 
@@ -126,9 +128,10 @@ class AudioAnalyzer {
     // https://www.researchgate.net/post/How_can_I_define_the_frequency_resolution_in_FFT_And_what_is_the_difference_on_interpreting_the_results_between_high_and_low_frequency_resolution
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
 
-    makeFrequencyArrays(fft) async {
-        List<double> amplitudes = new List(fft.length);
-        for( var i = 0 ; i  < fft.length; i++) {
+    makeAmplitudes(fft) async {
+        // we divide by 2 because the FFT is mirrored since the signal has no imaginary part
+        List<double> amplitudes = new List(fft.length ~/ 2);
+        for( var i = 0 ; i  < fft.length / 2; i++) {
             Complex v = fft[i];
             // https://en.wikipedia.org/wiki/Complex_number
             //var phase = atan2(v.imaginary, v.real);
