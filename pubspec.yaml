@@ -27,7 +27,8 @@ dependencies:
   assets_audio_player: ^2.0.8
   path_provider: ^1.6.11
   fft: ^0.2.0
-  smart_signal_processing: ^2.1.1
+  #smart_signal_processing: ^2.1.1
+  charts_flutter: ^0.9.0
 
 # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

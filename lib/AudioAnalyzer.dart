@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:fft/fft.dart';
 // another more powerful library could be used: smart_signal_processing
-import 'package:smart_signal_processing/smart_signal_processing.dart' as ssp;
+//import 'package:smart_signal_processing/smart_signal_processing.dart' as ssp;
 import 'package:my_complex/my_complex.dart';
 
 class AudioAnalyzer {
@@ -19,7 +19,6 @@ class AudioAnalyzer {
     var _file;
     var _assetsAudioPlayer;
     var _amplitudes;
-    var _phases;
 
     makeFile() async {
         final directory = await getApplicationDocumentsDirectory();
@@ -130,14 +129,12 @@ class AudioAnalyzer {
 
     makeFrequencyArrays(fft) async {
         _amplitudes = new List(fft.length);
-        _phases = new List(fft.length);
         for( var i = 0 ; i  < fft.length; i++) {
             Complex v = fft[i];
             var modulus = v.modulus;
             // https://en.wikipedia.org/wiki/Complex_number
-            var phase = atan2(v.imaginary, v.real);
+            //var phase = atan2(v.imaginary, v.real);
             _amplitudes[i] = modulus;
-            _phases[i] = phase;
         }
     }
 }
