@@ -1,6 +1,6 @@
+import 'package:audio_analyzer/FftPlotScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_analyzer/AudioAnalyzer.dart';
-import 'package:audio_analyzer/FftPlot.dart';
 
 void main() {
   runApp(AudioAnalyzerApp());
@@ -11,7 +11,7 @@ class AudioAnalyzerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Audio analyzer',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -28,7 +28,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Record'),
     );
   }
 }
@@ -77,6 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _analyze() {
     _audioAnalyzer.analyze();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FftPlotScreen()),
+    );
   }
 
   @override
@@ -96,10 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child:
-        SimpleScatterPlotChart.withRandomData(),
-        /*
-        Column(
+        child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -141,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
           ),
-          */
         ),
     );
   }

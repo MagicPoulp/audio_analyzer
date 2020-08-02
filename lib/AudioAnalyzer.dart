@@ -18,7 +18,6 @@ class AudioAnalyzer {
     var _recorder;
     var _file;
     var _assetsAudioPlayer;
-    var _amplitudes;
 
     makeFile() async {
         final directory = await getApplicationDocumentsDirectory();
@@ -82,8 +81,8 @@ class AudioAnalyzer {
             await makeFile();
         }
         var fft = await computeFFT();
-        makeFrequencyArrays(fft);
-        var temp = 1;
+        var amplitudes = await makeFrequencyArrays(fft);
+        return amplitudes;
     }
 
     // In the README, we have an adb command to download the wav
@@ -128,13 +127,12 @@ class AudioAnalyzer {
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
 
     makeFrequencyArrays(fft) async {
-        _amplitudes = new List(fft.length);
+        var amplitudes = new List(fft.length);
         for( var i = 0 ; i  < fft.length; i++) {
             Complex v = fft[i];
-            var modulus = v.modulus;
             // https://en.wikipedia.org/wiki/Complex_number
             //var phase = atan2(v.imaginary, v.real);
-            _amplitudes[i] = modulus;
+            amplitudes[i] = v.modulus;
         }
     }
 }
