@@ -19,6 +19,7 @@ import 'dart:math';
 
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SimpleScatterPlotChart extends StatelessWidget {
   final List<charts.Series> seriesList;
@@ -26,13 +27,16 @@ class SimpleScatterPlotChart extends StatelessWidget {
 
   SimpleScatterPlotChart(this.seriesList, {this.animate,});
 
-  factory SimpleScatterPlotChart.withFftAmplitudes(fftAmplitudes) {
+  factory SimpleScatterPlotChart.withFftAmplitudes(List<double> fftAmplitudes) {
+    var numPoints = fftAmplitudes.length;
+    var samplingRate = 16000;
+    var frequencyStep = samplingRate / numPoints;
     List<charts.Series<num, num>> series = [new charts.Series<num, num>(
       id: '',
       colorFn: (_amplitude, _) {
         return charts.MaterialPalette.green.shadeDefault;
       },
-      domainFn: (num _amplitude, i) => i,
+      domainFn: (num _amplitude, i) => (i + 1) * frequencyStep,
       measureFn: (num amplitude, _i) => amplitude,
       //radiusPxFn: (num _amplitude, _i) => 2,
       //data: [1.1, 2.2, 3.3],
@@ -49,6 +53,16 @@ class SimpleScatterPlotChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // a LineChart is faster
-    return new charts.NumericComboChart(seriesList, animate: animate);
+    return new charts.NumericComboChart(
+      seriesList,
+      animate: animate,
+      domainAxis: new charts.NumericAxisSpec(
+        tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredMaxTickCount: 10),
+        tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
+            NumberFormat.compact()
+        ),
+        showAxisLine: false,
+      ),
+    );
   }
 }
