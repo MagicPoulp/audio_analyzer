@@ -31,6 +31,9 @@ class SimpleScatterPlotChart extends StatelessWidget {
     var numPoints = fftAmplitudes.length;
     var samplingRate = 16000;
     var frequencyStep = samplingRate / numPoints;
+    // Due to the Nyquist-Shannon theorem, we must discard frequencies up to half the sampling rate
+    // this is hard-coded, the domain space could be dynamic
+    List<double> fftAmplitudesTrimmed = List.from(fftAmplitudes.getRange(0, numPoints ~/ 2));
     List<charts.Series<num, num>> series = [new charts.Series<num, num>(
       id: '',
       colorFn: (_amplitude, _) {
@@ -40,7 +43,7 @@ class SimpleScatterPlotChart extends StatelessWidget {
       measureFn: (num amplitude, _i) => amplitude,
       //radiusPxFn: (num _amplitude, _i) => 2,
       //data: [1.1, 2.2, 3.3],
-      data: fftAmplitudes,
+      data: fftAmplitudesTrimmed,
     )];
 
     return new SimpleScatterPlotChart(
@@ -57,7 +60,7 @@ class SimpleScatterPlotChart extends StatelessWidget {
       seriesList,
       animate: animate,
       domainAxis: new charts.NumericAxisSpec(
-        tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredMaxTickCount: 10),
+        tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredTickCount: 10),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
             NumberFormat.compact()
         ),
