@@ -32,8 +32,9 @@ class SimpleScatterPlotChart extends StatelessWidget {
       colorFn: (_amplitude, _) {
         return charts.MaterialPalette.green.shadeDefault;
       },
-      domainFn: (_amplitude, i) => i,
-      measureFn: (num amplitude, _) => amplitude,
+      domainFn: (num _amplitude, i) => i,
+      measureFn: (num amplitude, _i) => amplitude,
+      //radiusPxFn: (num _amplitude, _i) => 2,
       //data: [1.1, 2.2, 3.3],
       data: fftAmplitudes,
     )];
@@ -110,7 +111,8 @@ class SimpleScatterPlotChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new charts.LineChart(seriesList, animate: animate);
+    // a LineChart is faster
+    return new charts.NumericComboChart(seriesList, animate: animate);
   }
 
   /// Create one series with sample hard coded data.
