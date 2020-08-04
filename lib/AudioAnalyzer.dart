@@ -96,6 +96,80 @@ class AudioAnalyzer {
     // windowing makes a more periodic signal
     // https://download.ni.com/evaluation/pxi/Understanding%20FFTs%20and%20Windowing.pdf
     computeFFT() async {
+        var periodicSamples = await getPeriodicSamples();
+        var fft = new FFT().Transform(periodicSamples);
+        return fft;
+    }
+
+    getPeriodicSamples() async {
+        var samples = await getSamples();
+
+        // we force the signal to be periodic by cutting at a certain mean amplitude value
+        // because the sound is correct to the ear, the FFT must give good coefficients
+        // the human ear cannot hear below 20Hz or above 20KHz.
+        double mean1 = 0;
+        double mean2 = 0;
+        num tenPercentSize = samples.length / 10;
+        for (var i = 0; i < tenPercentSize; i++) {
+            mean1 += samples[i];
+            mean2 += samples[samples.length - 1 - i];
+        }
+        mean1 /= tenPercentSize;
+        mean2 /= tenPercentSize;
+        int sideValue = ((mean1 + mean2) / 2).round();
+        int index1 = getIndexForCutting(samples, sideValue, false);
+        int index2 = getIndexForCutting(samples, sideValue, true);
+        samples[index1] = sideValue;
+        samples[index2] = sideValue;
+        List<int> periodicSamples = samples.sublist(index1, index2 + 1);
+        return periodicSamples;
+    }
+
+    getSamples() async {
+        // the header has 44 bytes, which makes 22 16-bit integers
+        // we know each byte has 2 bytes
+        Uint8List bytes = await new File(_file).readAsBytes();
+        int lengthBytes = bytes.length - 44;
+        // the Hann function wants a sample with size equal to a power of 2
+        // https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2/24844826
+        var powerOf2 = pow(2, (log(lengthBytes) / log(2)).ceil()) / 2;
+        int extra = (lengthBytes - powerOf2) ~/ 2;
+
+        ByteBuffer buffer = bytes.buffer;
+        // 16-bit samples are stored as 2's-complement signed integers, ranging from -32768 to 32767.
+        // http://soundfile.sapp.org/doc/WaveFormat/
+        // 22 is removed for the header
+        // extra is removed to have a power of 2.
+        var samplesOn2Bytes = buffer.asInt16List().skip(22);
+        List<int> samples = new List<int>.from(samplesOn2Bytes);
+        return samples;
+    }
+
+    getIndexForCutting(List<int> samples, int sideValue, bool rightSide) {
+        int tenPercentSize = samples.length ~/ 10;
+        // https://stackoverflow.com/questions/50429660/is-there-a-constant-for-max-min-int-double-value-in-dart
+        const int int64MaxValue = 9223372036854775807;
+        int distance = int64MaxValue;
+        int index = 0;
+        for (var i = 0; i < tenPercentSize; i++) {
+            var sampleValue = samples[i];
+            if (rightSide) {
+                sampleValue = samples[samples.length - 1 - i];
+            }
+            var newDistance = (sampleValue - sideValue).abs();
+            if (newDistance < distance) {
+                distance = newDistance;
+                index = i;
+                if (rightSide) {
+                    index = samples.length - 1 - i;
+                }
+            }
+        }
+        return index;
+    }
+
+    // old solution with Hann
+    computeFFTWithHann() async {
         // the header has 44 bytes, which makes 22 16-bit integers
         // we know each byte has 2 bytes
         Uint8List bytes = await new File(_file).readAsBytes();
