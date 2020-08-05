@@ -7,3 +7,5 @@ add_library( fftw_plugin
              ./src/fftw_plugin.cpp )
 
 target_include_directories(fftw_plugin PRIVATE fftw_library/include)
+
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")

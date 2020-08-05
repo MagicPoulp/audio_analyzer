@@ -4,15 +4,20 @@
 #include "fftw_plugin.h"
 
 // https://flutter.dev/docs/development/platform-integration/c-interop
-// http://www.fftw.org/fftw2_doc/fftw_2.html
+// http://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
 int fft() {
-     fftw_complex in[N], out[N];
-     fftw_plan p;
+    int N = 10;
+    fftw_complex *in, *out;
+    fftw_plan p;
 
-     p = fftw_create_plan(N, FFTW_FORWARD, FFTW_ESTIMATE);
+    in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
-     fftw_one(p, in, out);
+    fftw_execute(p);
 
-     fftw_destroy_plan(p);
-     return 0;
+    fftw_destroy_plan(p);
+    fftw_free(in);
+    fftw_free(out);
+    return 0;
 }
