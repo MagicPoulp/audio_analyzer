@@ -51,6 +51,15 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    // https://flutter.dev/docs/development/platform-integration/c-interop
+    externalNativeBuild {
+        // Encapsulates your CMake build configurations.
+        cmake {
+            // Provides a relative path to your CMake build script.
+            path "../../fftw_plugin/CMakeLists.txt"
+        }
+    }
 }
 
 flutter {
