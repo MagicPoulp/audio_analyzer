@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:math';
 import 'dart:core';
+import 'dart:ffi'; // For FFI
+import 'dart:io'; // For Platform.isX
 
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audio_recorder
@@ -18,6 +20,18 @@ class AudioAnalyzer {
     var _recorder;
     var _file;
     var _assetsAudioPlayer;
+
+    AudioAnalyzer() {
+        // https://flutter.dev/docs/development/platform-integration/c-interop
+        final DynamicLibrary nativeAddLib = Platform.isAndroid
+            ? DynamicLibrary.open("fftw_plugin.a")
+            : DynamicLibrary.process();
+        final int Function() transform =
+        nativeAddLib
+            .lookup<NativeFunction<Int32 Function()>>("transform")
+            .asFunction();
+        transform();
+    }
 
     makeFile() async {
         final directory = await getApplicationDocumentsDirectory();

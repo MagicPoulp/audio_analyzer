@@ -6,7 +6,7 @@
 // https://flutter.dev/docs/development/platform-integration/c-interop
 // http://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
 extern "C"
-int fft() {
+int transform() {
     int N = 10;
     fftw_complex *in, *out;
     fftw_plan p;
