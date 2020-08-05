@@ -1,5 +1,5 @@
 
-#include <fftw.h>
+#include <fftw3.h>
 
 #include "fftw_plugin.h"
 
