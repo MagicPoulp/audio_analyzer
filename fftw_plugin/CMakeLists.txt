@@ -12,8 +12,8 @@ target_link_libraries(fftw_plugin PRIVATE fftw3 m)
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
 
-add_executable(test ./src/test.cpp)
+#add_executable(test ./src/test.cpp)
 
-target_link_libraries(test PRIVATE fftw_plugin PRIVATE)
+#target_link_libraries(test PRIVATE fftw_plugin PRIVATE)
 
-target_link_directories(test PRIVATE fftw_library/lib)
+#target_link_directories(test PRIVATE fftw_library/lib)
