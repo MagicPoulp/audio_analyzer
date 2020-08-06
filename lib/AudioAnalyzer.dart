@@ -24,7 +24,7 @@ class AudioAnalyzer {
     AudioAnalyzer() {
         // https://flutter.dev/docs/development/platform-integration/c-interop
         final DynamicLibrary nativeAddLib = Platform.isAndroid
-            ? DynamicLibrary.open("fftw_plugin.a")
+            ? DynamicLibrary.open("fftw_plugin.so")
             : DynamicLibrary.process();
         final int Function() transform =
         nativeAddLib
@@ -183,6 +183,7 @@ class AudioAnalyzer {
     }
 
     // old solution with Hann
+    /*
     computeFFTWithHann() async {
         // the header has 44 bytes, which makes 22 16-bit integers
         // we know each byte has 2 bytes
@@ -212,6 +213,7 @@ class AudioAnalyzer {
         var fft = new FFT().Transform(window);
         return fft;
     }
+     */
 
     // "In an fft frequency plot, the highest frequency is the sampling frequency fs and the lowest frequency is fs/N where N is the number of fft points. "
     // https://www.researchgate.net/post/How_can_I_define_the_frequency_resolution_in_FFT_And_what_is_the_difference_on_interpreting_the_results_between_high_and_low_frequency_resolution

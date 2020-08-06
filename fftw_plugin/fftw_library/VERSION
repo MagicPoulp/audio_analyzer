@@ -1,3 +1,5 @@
 fftw-3.3.8.tar.gz
 http://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
 
+configure --enabled-shared
+was used

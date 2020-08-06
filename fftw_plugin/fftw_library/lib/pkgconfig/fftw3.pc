@@ -1,4 +1,4 @@
-prefix=/home/thierry/repos/audio_analyzer/fftw_plugin/build
+prefix=/home/thierry/repos/audio_analyzer/fftw_plugin/fftw_library
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
