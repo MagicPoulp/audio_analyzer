@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.10.2)
 # we use IMPORTED because fftw3 is pre-built
 # https://stackoverflow.com/questions/40352177/imported-lib-notfound-in-building-ffmpeg-3-2-for-android-studio-2-2
 # https://developer.android.com/studio/projects/configure-cmake
-
+# https://stackoverflow.com/questions/37924383/combining-several-static-libraries-into-one-using-cmake
+# https://stackoverflow.com/questions/11429055/cmake-how-create-a-single-shared-library-from-all-static-libraries-of-subprojec
 add_library(fftw3 STATIC IMPORTED)
 set_target_properties( # Specifies the target library.
                        fftw3
@@ -12,10 +13,13 @@ set_target_properties( # Specifies the target library.
                        PROPERTIES IMPORTED_LOCATION
 
                        # Provides the path to the library you want to import.
-                       fftw_library/lib/libfftw3.a )
+                       #                       fftw_library/lib/libfftw3.a )
+                       # a full path is required
+                       ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library/lib/libfftw3.a )
 
 add_library( fftw_plugin_static
-             STATIC
+  #             STATIC
+             SHARED
              ./src/fftw_plugin.cpp )
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
@@ -40,4 +44,5 @@ target_include_directories(fftw_plugin_static PRIVATE fftw_library/include)
 target_link_libraries(fftw_plugin_static PRIVATE fftw3 m)
 
 #add_library(fftw_plugin SHARED)
-#target_link_libraries(fftw_plugin PUBLIC fftw_plugin_static ${FFTW3_LIBRARY} m)
+#target_link_libraries(fftw_plugin PUBLIC fftw_plugin_static fftw3 m)
+#target_link_libraries(fftw_plugin PUBLIC fftw_plugin_static)
