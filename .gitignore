@@ -49,3 +49,5 @@ app.*.map.json
 # cmake build
 build/
 .cxx/
+temp/
+fftw_library*/

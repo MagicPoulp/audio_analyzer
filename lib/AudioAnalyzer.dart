@@ -24,13 +24,14 @@ class AudioAnalyzer {
     AudioAnalyzer() {
         // https://flutter.dev/docs/development/platform-integration/c-interop
         final DynamicLibrary nativeAddLib = Platform.isAndroid
-            ? DynamicLibrary.open("fftw_plugin.so")
+            ? DynamicLibrary.open("libfftw_plugin.so")
             : DynamicLibrary.process();
         final int Function() transform =
         nativeAddLib
             .lookup<NativeFunction<Int32 Function()>>("transform")
             .asFunction();
-        transform();
+        var temp = transform();
+        var temp2 = 1;
     }
 
     makeFile() async {
