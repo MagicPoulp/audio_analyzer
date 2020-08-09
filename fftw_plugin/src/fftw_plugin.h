@@ -3,6 +3,6 @@
 #define AUDIO_ANALYZER_FFTW_PLUGIN_H
 
 extern "C" __attribute__((visibility("default"))) __attribute__((used))
-int transform();
+int transform(short int* data, int length);
 
 #endif //AUDIO_ANALYZER_FFTW_PLUGIN_H

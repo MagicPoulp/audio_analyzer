@@ -39,7 +39,7 @@ add_library( fftw_plugin
              ./src/fftw_plugin.cpp )
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
-target_include_directories(fftw_plugin PRIVATE fftw_library/include)
+target_include_directories(fftw_plugin PRIVATE fftw_library1/include)
 
 #link_directories(fftw_library/lib)
 # TO DEBUG this is the command that does not work
