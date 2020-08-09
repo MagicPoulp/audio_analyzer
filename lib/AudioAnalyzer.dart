@@ -23,8 +23,9 @@ class AudioAnalyzer {
     var _recorder;
     var _file;
     var _assetsAudioPlayer;
-    int Function(ffi.Pointer<ffi.Int16>, int) _libfftw_plugin_transform;
+    int Function(ffi.Pointer<ffi.Int16>, int, ffi.Pointer<ffi.Float>) _libfftw_plugin_transform;
     ffi.Pointer<ffi.Int16> _data;
+    ffi.Pointer<ffi.Float> _fft;
 
     AudioAnalyzer() {
         // https://flutter.dev/docs/development/platform-integration/c-interop
@@ -36,7 +37,7 @@ class AudioAnalyzer {
 
         _libfftw_plugin_transform = nativeAddLib
             .lookup<ffi.NativeFunction<
-            ffi.Int32 Function(ffi.Pointer<ffi.Int16>, ffi.Int32)
+            ffi.Int32 Function(ffi.Pointer<ffi.Int16>, ffi.Int32, ffi.Pointer<ffi.Float>)
             >>("transform")
             .asFunction();
     }
@@ -44,6 +45,9 @@ class AudioAnalyzer {
     void dispose() {
         if (_data != null) {
             ffi.free(_data);
+        }
+        if (_fft != null) {
+            ffi.free(_fft);
         }
     }
 
@@ -134,9 +138,11 @@ class AudioAnalyzer {
         _data = ffi.allocate<ffi.Int16>(count: periodicSamples.length); // Allocate a pointer large enough.
         final pointerList = _data.asTypedList(periodicSamples.length); // Create a list that uses our pointer and copy in the image data.
         pointerList.setAll(0, periodicSamples);
-        var fft = _libfftw_plugin_transform(_data, periodicSamples.length);
-        var temp1 = periodicSamples[0];
-        return new List<double>();
+        _fft = ffi.allocate<ffi.Float>(count: periodicSamples.length * 2);
+        var fft = _libfftw_plugin_transform(_data, periodicSamples.length, _fft);
+        Float32List fftDecoded = _fft.asTypedList(periodicSamples.length * 2);
+        List<double> result = new List<double>.from(fftDecoded);
+        return result;
     }
 
     getPeriodicSamplesSkippingTheHeader() async {
@@ -251,13 +257,14 @@ class AudioAnalyzer {
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
 
     makeAmplitudes(fft) async {
+        num numPoints = fft.length ~/  2;
         // we divide by 2 because the FFT is mirrored since the signal has no imaginary part
-        List<double> amplitudes = new List(fft.length ~/ 2);
-        for( var i = 0 ; i  < fft.length / 2; i++) {
-            Complex v = fft[i];
+        List<double> amplitudes = new List(numPoints ~/ 2);
+        for( var i = 0 ; i  < numPoints ~/ 2; i++) {
             // https://en.wikipedia.org/wiki/Complex_number
             //var phase = atan2(v.imaginary, v.real);
-            amplitudes[i] = v.modulus as double;
+            var temp1 = i;
+            amplitudes[i] = sqrt(fft[2*i] * fft[2*i] + fft[2*i+1] * fft[2*i+1]);
         }
         return amplitudes;
     }
