@@ -1,3 +1,5 @@
+Valid architecture names are: i386 x86_64 x86_64h armv4t arm armv5e armv6 armv6m armv7 armv7em armv7k armv7m armv7s arm64 arm64_32 ppc ppc64
+
 https://stackoverflow.com/questions/21990021/how-to-determine-host-value-for-configure-when-using-cross-compiler
 
 We compile statically the fftw3 library in C using the android studio compiler

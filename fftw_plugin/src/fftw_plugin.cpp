@@ -1,7 +1,11 @@
 
+// C headers should have an extern C
+// https://arne-mertz.de/2018/10/calling-cpp-code-from-c-with-extern-c/
+extern "C" {
 #include <fftw3.h>
 
 #include "fftw_plugin.h"
+}
 
 // https://flutter.dev/docs/development/platform-integration/c-interop
 // http://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
