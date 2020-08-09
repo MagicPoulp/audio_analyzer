@@ -41,7 +41,13 @@ target_include_directories(fftw_plugin_static PRIVATE fftw_library/include)
 #message(${CMAKE_CURRENT_SOURCE_DIR}/fftw_library/lib)
 
 #target_link_libraries(fftw_plugin_static PRIVATE ${FFTW3_LIBRARY} m)
-target_link_libraries(fftw_plugin_static PRIVATE fftw3 m)
+target_link_libraries(fftw_plugin_static PUBLIC fftw3 m)
+
+# https://stackoverflow.com/questions/7935421/linking-archives-a-into-shared-object-so
+#set_target_properties(fftw_plugin_static PROPERTIES
+  #LINK_FLAGS "-Wl,--allow-multiple-definition --whole-archive ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library/lib/libfftw3.a"
+  #  LINK_FLAGS "-Wl,--whole-archive ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library/lib/libfftw3.a --allow-multiple-definition -Wl,--no-whole-archive"
+#)
 
 #add_library(fftw_plugin SHARED)
 #target_link_libraries(fftw_plugin PUBLIC fftw_plugin_static fftw3 m)
