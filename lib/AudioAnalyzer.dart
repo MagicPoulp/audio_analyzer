@@ -20,14 +20,18 @@ typedef NativeFFTFunction = Function(ffi.Pointer<ffi.Int16>, int);
 
 class AudioAnalyzer {
 
+    int _samplingRate;
     var _recorder;
     var _file;
     var _assetsAudioPlayer;
-    int Function(ffi.Pointer<ffi.Int16>, int, ffi.Pointer<ffi.Float>) _libfftw_plugin_transform;
+    int Function(ffi.Pointer<ffi.Int16>, int, ffi.Pointer<ffi.Float>) _libfftwPluginTransform;
     ffi.Pointer<ffi.Int16> _data;
     ffi.Pointer<ffi.Float> _fft;
 
-    AudioAnalyzer() {
+    AudioAnalyzer({samplingRate,}) {
+        _samplingRate = samplingRate;
+        // we use the C library FFTW because it is a quality library without errors, and
+        // because it works if the length of the input is not equal to a power of 2
         // https://flutter.dev/docs/development/platform-integration/c-interop
         // https://stackoverflow.com/questions/58838193/pass-uint8list-to-pointervoid-in-dartffi
         // https://github.com/martin-labanic/camera_preview_ffi_image_processing/blob/master/image_processing_plugin/lib/image_processing_plugin.dart
@@ -35,7 +39,7 @@ class AudioAnalyzer {
             ? ffi.DynamicLibrary.open("libfftw_plugin.so")
             : ffi.DynamicLibrary.process();
 
-        _libfftw_plugin_transform = nativeAddLib
+        _libfftwPluginTransform = nativeAddLib
             .lookup<ffi.NativeFunction<
             ffi.Int32 Function(ffi.Pointer<ffi.Int16>, ffi.Int32, ffi.Pointer<ffi.Float>)
             >>("transform")
@@ -83,7 +87,7 @@ class AudioAnalyzer {
         // And the human ear can hear up to 20KHz
         // https://www.sciencedirect.com/topics/engineering/nyquist-theorem
         _recorder = FlutterAudioRecorder(
-            _file, audioFormat: AudioFormat.WAV, sampleRate: 16000);
+            _file, audioFormat: AudioFormat.WAV, sampleRate: 48000);
         await _recorder.initialized;
 
         await _recorder.start();
@@ -135,11 +139,25 @@ class AudioAnalyzer {
     // https://stackoverflow.com/questions/58838193/pass-uint8list-to-pointervoid-in-dartffi
     computeFFT() async {
         Int16List periodicSamples = await getPeriodicSamplesSkippingTheHeader();
+        //periodicSamples = Int16List(8); // uncomment this line to run the tests below
         _data = ffi.allocate<ffi.Int16>(count: periodicSamples.length); // Allocate a pointer large enough.
         final pointerList = _data.asTypedList(periodicSamples.length); // Create a list that uses our pointer and copy in the image data.
         pointerList.setAll(0, periodicSamples);
+
+        // test data to check the fft results
+        // http://www.sccon.ca/sccon/fft/fft3.htm
+        // Test 1
+        //pointerList.fillRange(0, periodicSamples.length, 0);
+        //pointerList[0] = 1;
+
+        // Test 2
+        // the magnitudes always are equal to one for each point
+        // correct even if we get 0.7, and not 0.88. The magnitude is 1 in our case.
+        //pointerList.fillRange(0, periodicSamples.length, 0);
+        //pointerList[1] = 1;
+
         _fft = ffi.allocate<ffi.Float>(count: periodicSamples.length * 2);
-        var fft = _libfftw_plugin_transform(_data, periodicSamples.length, _fft);
+        var fft = _libfftwPluginTransform(_data, periodicSamples.length, _fft);
         Float32List fftDecoded = _fft.asTypedList(periodicSamples.length * 2);
         List<double> result = new List<double>.from(fftDecoded);
         return result;

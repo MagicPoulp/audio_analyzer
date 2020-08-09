@@ -27,9 +27,8 @@ class SimpleScatterPlotChart extends StatelessWidget {
 
   SimpleScatterPlotChart(this.seriesList, {this.animate,});
 
-  factory SimpleScatterPlotChart.withFftAmplitudes(List<double> fftAmplitudes) {
+  factory SimpleScatterPlotChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
     var numPoints = fftAmplitudes.length;
-    var samplingRate = 16000;
     var frequencyStep = samplingRate / numPoints;
     // Due to the Nyquist-Shannon theorem, we must discard frequencies up to half the sampling rate
     // this is hard-coded, the domain space could be dynamic

@@ -25,8 +25,8 @@ int transform(short int* inData, int length, float* outData) {
     p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
     fftw_execute(p);
     for (int i = 0; i < N; i++) {
-        outData[i] = out[i][0];
-        outData[i+1] = out[i][1];
+        outData[2*i] = out[i][0];
+        outData[2*i+1] = out[i][1];
     }
 
     fftw_destroy_plan(p);

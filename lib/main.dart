@@ -52,8 +52,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  AudioAnalyzer _audioAnalyzer = new AudioAnalyzer();
+  // 16000 is also a good choice
+  // since above 8K is very high
+  // but 48K covers up to 20K which is the maximum that can be heard
+  static int get samplingRate => 48000;
+  AudioAnalyzer _audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate);
 
   void _start() {
     _audioAnalyzer.start();
@@ -63,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
@@ -79,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<double> fftAmplitudes = await _audioAnalyzer.analyze();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes)),
+      MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes, samplingRate: samplingRate,)),
     );
   }
 
