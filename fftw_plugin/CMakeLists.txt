@@ -5,6 +5,22 @@ cmake_minimum_required(VERSION 3.10.2)
 # https://developer.android.com/studio/projects/configure-cmake
 # https://stackoverflow.com/questions/37924383/combining-several-static-libraries-into-one-using-cmake
 # https://stackoverflow.com/questions/11429055/cmake-how-create-a-single-shared-library-from-all-static-libraries-of-subprojec
+message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+message(bin: ${CMAKE_CURRENT_BINARY_DIR})
+if(${CMAKE_CURRENT_BINARY_DIR} MATCHES "arm64-v8a")
+    set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library4/lib/libfftw3.a)
+endif()
+if(${CMAKE_CURRENT_BINARY_DIR} MATCHES "armeabi-v7a")
+    set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library3/lib/libfftw3.a)
+endif()
+if(${CMAKE_CURRENT_BINARY_DIR} MATCHES "x86$")
+    set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library1/lib/libfftw3.a)
+endif()
+if(${CMAKE_CURRENT_BINARY_DIR} MATCHES "x86_64$")
+    set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library2/lib/libfftw3.a)
+endif()
+
+message(LIB_PATH: ${LIB_PATH})
 add_library(fftw3 STATIC IMPORTED)
 set_target_properties( # Specifies the target library.
                        fftw3
@@ -15,7 +31,7 @@ set_target_properties( # Specifies the target library.
                        # Provides the path to the library you want to import.
                        #                       fftw_library/lib/libfftw3.a )
                        # a full path is required
-                       ${CMAKE_CURRENT_SOURCE_DIR}/fftw_library/lib/libfftw3.a )
+                       ${LIB_PATH} )
 
 add_library( fftw_plugin_static
   #             STATIC
