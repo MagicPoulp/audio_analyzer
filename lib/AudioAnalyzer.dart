@@ -122,6 +122,9 @@ class AudioAnalyzer {
         }
     }
 
+    // the debug console may return a non-harmful error
+    // saying that the wav block size is 1 instead of 2
+    // the block size represents the number of channels
     play() async {
         _assetsAudioPlayer = AssetsAudioPlayer();
 
