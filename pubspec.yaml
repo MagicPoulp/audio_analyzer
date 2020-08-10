@@ -29,6 +29,9 @@ dependencies:
   fft: ^0.2.0
   #smart_signal_processing: ^2.1.1
   charts_flutter: ^0.9.0
+  #charts_common: 0.9.0
+  intl: '>=0.15.2 < 0.17.0'
+  ffi: ^0.1.3
 
 # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
