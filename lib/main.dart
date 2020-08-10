@@ -58,6 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
   static int get samplingRate => 48000;
   AudioAnalyzer _audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate);
 
+  void _autoRecordAfterDelay() {
+    _audioAnalyzer.autoRecordAfterDelay();
+  }
+
   void _start() {
     _audioAnalyzer.start();
     setState(() {
@@ -121,6 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               'Record a sound and analyze its frequencies',
+            ),
+            new RaisedButton(
+              onPressed: _autoRecordAfterDelay,
+              child: new Text('Wait 5s and record 6s'),
             ),
             new RaisedButton(
               onPressed: _start,

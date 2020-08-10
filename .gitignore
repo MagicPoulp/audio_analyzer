@@ -51,3 +51,4 @@ build/
 .cxx/
 temp/
 fftw_library*/
+*.wav

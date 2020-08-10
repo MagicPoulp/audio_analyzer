@@ -1,5 +1,7 @@
+put scientific nots C4, etc in the legend
+put the orientation in landscape, and max it zoomable or even outside the screen
+
 understand why the amplitude is too high
-use dot plots again and not line
-see difference with window and without
+use dot plots again and not lines
 
 "In general, to return a FFT amplitude equal to the amplitude signal which you input to the FFT, you need to normalize FFTs by the number of sample points you're inputting to the FFT."

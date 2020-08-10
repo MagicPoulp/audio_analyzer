@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:math';
 import 'dart:core';
+import 'dart:async';
 import 'dart:ffi' as ffi; // For FFI
 import 'package:ffi/ffi.dart' as ffi; // For free() that is not in the dart package
 import 'dart:io'; // For Platform.isX
@@ -22,11 +23,13 @@ class AudioAnalyzer {
 
     int _samplingRate;
     var _recorder;
-    var _file;
+    String _file;
     var _assetsAudioPlayer;
     int Function(ffi.Pointer<ffi.Int16>, int, ffi.Pointer<ffi.Float>) _libfftwPluginTransform;
     ffi.Pointer<ffi.Int16> _data;
     ffi.Pointer<ffi.Float> _fft;
+    Timer _timer1;
+    Timer _timer2;
 
     AudioAnalyzer({samplingRate,}) {
         _samplingRate = samplingRate;
@@ -59,6 +62,21 @@ class AudioAnalyzer {
         final directory = await getApplicationDocumentsDirectory();
         final appPath = directory.path;
         _file = path.join(appPath, 'audio_analyzer_record.wav');
+    }
+
+    // record for 6s after a delay of 5s
+    autoRecordAfterDelay() async {
+        const delay1 = const Duration(seconds: 5);
+        const delay2 = const Duration(seconds: 6);
+
+        void callback2() {
+            this.stop();
+        }
+        void callback1() {
+            this.start();
+            _timer1 = new Timer(delay2, callback2);
+        }
+        _timer2 = new Timer(delay1, callback1);
     }
 
     start() async {
