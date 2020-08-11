@@ -21,13 +21,13 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class SimpleScatterPlotChart extends StatelessWidget {
+class CustomNumericComboChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;
 
-  SimpleScatterPlotChart(this.seriesList, {this.animate,});
+  CustomNumericComboChart(this.seriesList, {this.animate,});
 
-  factory SimpleScatterPlotChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
+  factory CustomNumericComboChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
     var numPoints = fftAmplitudes.length;
     var frequencyStep = samplingRate / numPoints;
     // Due to the Nyquist-Shannon theorem, we must discard frequencies up to half the sampling rate
@@ -45,16 +45,17 @@ class SimpleScatterPlotChart extends StatelessWidget {
       data: fftAmplitudesTrimmed,
     )];
 
-    return new SimpleScatterPlotChart(
+    return new CustomNumericComboChart(
       series,
       // Disable animations for image tests.
       animate: false,
     );
   }
 
+  // https://google.github.io/charts/flutter/example/combo_charts/numeric_line_bar
   @override
   Widget build(BuildContext context) {
-    // a LineChart is faster
+    // a LineChart is faster but a Combo Chart looks better
     return new charts.NumericComboChart(
       seriesList,
       animate: animate,
