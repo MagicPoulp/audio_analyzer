@@ -15,7 +15,8 @@ class FftPlotScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Frequency plot')),
       body: Center(
-        child: CustomNumericComboChart.withFftAmplitudes(this.fftAmplitudes, this.samplingRate),
+          child: new SlidingViewportOnSelection.withSampleData(),
+        // child: CustomNumericComboChart.withFftAmplitudes(this.fftAmplitudes, this.samplingRate),
       ),
     );
   }
