@@ -13,10 +13,6 @@ import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audio_recorder
 import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:fft/fft.dart';
-// another more powerful library could be used: smart_signal_processing
-//import 'package:smart_signal_processing/smart_signal_processing.dart' as ssp;
-import 'package:my_complex/my_complex.dart';
 
 typedef NativeFFTFunction = Function(ffi.Pointer<ffi.Int16>, int);
 
@@ -263,43 +259,9 @@ class AudioAnalyzer {
         return index;
     }
 
-    // old solution with Hann
-    /*
-    computeFFTWithHann() async {
-        // the header has 44 bytes, which makes 22 16-bit integers
-        // we know each byte has 2 bytes
-        Uint8List bytes = await new File(_file).readAsBytes();
-        int lengthBytes = bytes.length - 44;
-        // the Hann function wants a sample with size equal to a power of 2
-        // https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2/24844826
-        var powerOf2 = pow(2, (log(lengthBytes) / log(2)).ceil()) / 2;
-        int extra = (lengthBytes - powerOf2) ~/ 2;
-
-        ByteBuffer buffer = bytes.buffer;
-        // 16-bit samples are stored as 2's-complement signed integers, ranging from -32768 to 32767.
-        // http://soundfile.sapp.org/doc/WaveFormat/
-        // 22 is removed for the header
-        // extra is removed to have a power of 2.
-        var samplesOn2Bytes = buffer.asInt16List().skip(22 + extra);
-        List<int> samples = new List<int>.from(samplesOn2Bytes);
-
-        // a window function is necessary because the sample is not-periodic
-        // but we can make it periodic
-        // A quote about the Hann function:
-        // "An example of apodization is the use of the Hann window in the fast Fourier transform analyzer to smooth the discontinuities at the beginning and end of the sampled time record. "
-        // https://en.wikipedia.org/wiki/Apodization
-        var windowPackage = new Window(WindowType.HANN);
-        //var window = windowPackage.apply(samples);
-        var window = samples;
-        var fft = new FFT().Transform(window);
-        return fft;
-    }
-     */
-
     // "In an fft frequency plot, the highest frequency is the sampling frequency fs and the lowest frequency is fs/N where N is the number of fft points. "
     // https://www.researchgate.net/post/How_can_I_define_the_frequency_resolution_in_FFT_And_what_is_the_difference_on_interpreting_the_results_between_high_and_low_frequency_resolution
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
-
     makeAmplitudes(fft) async {
         num numPoints = fft.length ~/  2;
         // we divide by 2 because the FFT is mirrored since the signal has no imaginary part
