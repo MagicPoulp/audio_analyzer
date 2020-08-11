@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:ffi' as ffi; // For FFI
 import 'package:ffi/ffi.dart' as ffi; // For free() that is not in the dart package
 import 'dart:io'; // For Platform.isX
+import 'package:flutter/services.dart';
 
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audio_recorder
@@ -137,6 +138,10 @@ class AudioAnalyzer {
 
 
     analyze() async {
+        // Set landscape orientation
+        SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+        ]);
         if (_file == null) {
             await makeFile();
         }
