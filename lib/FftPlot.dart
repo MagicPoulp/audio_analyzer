@@ -66,6 +66,7 @@ class CustomNumericComboChart extends StatelessWidget {
         ),
         showAxisLine: false,
       ),
+      behaviors: [new charts.PanAndZoomBehavior()],
     );
   }
 }
