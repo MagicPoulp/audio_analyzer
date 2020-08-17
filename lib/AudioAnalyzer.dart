@@ -163,7 +163,8 @@ class AudioAnalyzer {
         Int16List periodicSamples = await getPeriodicSamplesSkippingTheHeader();
         //periodicSamples = Int16List(8); // uncomment this line to run the tests below
         _data = ffi.allocate<ffi.Int16>(count: periodicSamples.length); // Allocate a pointer large enough.
-        final pointerList = _data.asTypedList(periodicSamples.length); // Create a list that uses our pointer and copy in the image data.
+        // Create a list that uses our pointer and copy in the image data.
+        final pointerList = _data.asTypedList(periodicSamples.length);
         pointerList.setAll(0, periodicSamples);
 
         // test data to check the fft results
@@ -259,7 +260,9 @@ class AudioAnalyzer {
         return index;
     }
 
-    // "In an fft frequency plot, the highest frequency is the sampling frequency fs and the lowest frequency is fs/N where N is the number of fft points. "
+    // Quote:
+    // "In an fft frequency plot, the highest frequency is the sampling frequency fs and the lowest frequency
+    // is equal to fs/N where N is the number of fft points."
     // https://www.researchgate.net/post/How_can_I_define_the_frequency_resolution_in_FFT_And_what_is_the_difference_on_interpreting_the_results_between_high_and_low_frequency_resolution
     // The Nyquist-Shannon theorem says that we have an accuracy up to sample rate / 2.
     makeAmplitudes(fft) async {
@@ -269,7 +272,9 @@ class AudioAnalyzer {
         for( var i = 0 ; i  < numPoints ~/ 2; i++) {
             // https://en.wikipedia.org/wiki/Complex_number
             //var phase = atan2(v.imaginary, v.real);
-            var temp1 = i;
+            // the initial value is a float with a maximum of around 10^38
+            // the flutter type is a double with a maximum of around 10^308
+            // sqrt(10^308) = 10^54. Hence, we do not exceed boundaries in the calculations below
             amplitudes[i] = sqrt(fft[2*i] * fft[2*i] + fft[2*i+1] * fft[2*i+1]);
         }
         return amplitudes;

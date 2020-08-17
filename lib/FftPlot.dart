@@ -56,17 +56,24 @@ class CustomNumericComboChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // a LineChart is faster but a Combo Chart looks better
-    return new charts.NumericComboChart(
+    // since the PanAndZoomBehaviour only works in a LineCHart, we use it.
+    //return new charts.NumericComboChart(
+    //return new charts.BarChart(
+    return new charts.LineChart(
       seriesList,
       animate: animate,
       domainAxis: new charts.NumericAxisSpec(
+        /*
         tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredTickCount: 10),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
             NumberFormat.compact()
         ),
         showAxisLine: false,
+        */
+        viewport: new charts.NumericExtents(0, 2000),
       ),
-      // here is how to show touches in the Android emulator
+      // use control and mouse to zoom in and out
+      // here is how to show touches in the Android emulator, but it is not needed
       // https://medium.theuxblog.com/enabling-show-touches-in-android-screen-recordings-for-user-research-cc968563fcb9
       behaviors: [new charts.SlidingViewport(), new charts.PanAndZoomBehavior()],
     );
