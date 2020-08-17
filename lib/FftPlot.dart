@@ -21,13 +21,13 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class SimpleScatterPlotChart extends StatelessWidget {
+class CustomNumericComboChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;
 
-  SimpleScatterPlotChart(this.seriesList, {this.animate,});
+  CustomNumericComboChart(this.seriesList, {this.animate,});
 
-  factory SimpleScatterPlotChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
+  factory CustomNumericComboChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
     var numPoints = fftAmplitudes.length;
     var frequencyStep = samplingRate / numPoints;
     // Due to the Nyquist-Shannon theorem, we must discard frequencies up to half the sampling rate
@@ -45,26 +45,45 @@ class SimpleScatterPlotChart extends StatelessWidget {
       data: fftAmplitudesTrimmed,
     )];
 
-    return new SimpleScatterPlotChart(
+    return new CustomNumericComboChart(
       series,
       // Disable animations for image tests.
       animate: false,
     );
   }
 
+  /*
+  Compared to C4, the pitch of a note is given by 440*2^((n-9)/12)
+  https://en.wikipedia.org/wiki/Scientific_pitch_notation
+  However, most clarinets, and orchestras tune A4 to 442Hz.
+  SO the frequency is equal to 442 * 2^((n-9)/12)
+  It corresponds to the table below for 4420Hz.
+  https://pages.mtu.edu/~suits/notefreq442.html
+  */
+  // https://google.github.io/charts/flutter/example/combo_charts/numeric_line_bar
   @override
   Widget build(BuildContext context) {
-    // a LineChart is faster
-    return new charts.NumericComboChart(
+    // a LineChart is faster but a Combo Chart looks better
+    // since the PanAndZoomBehaviour only works in a LineCHart, we use it.
+    //return new charts.NumericComboChart(
+    //return new charts.BarChart(
+    return new charts.LineChart(
       seriesList,
       animate: animate,
       domainAxis: new charts.NumericAxisSpec(
+        /*
         tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredTickCount: 10),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
             NumberFormat.compact()
         ),
         showAxisLine: false,
+        */
+        viewport: new charts.NumericExtents(0, 2000),
       ),
+      // use control and mouse to zoom in and out
+      // here is how to show touches in the Android emulator, but it is not needed
+      // https://medium.theuxblog.com/enabling-show-touches-in-android-screen-recordings-for-user-research-cc968563fcb9
+      behaviors: [new charts.SlidingViewport(), new charts.PanAndZoomBehavior()],
     );
   }
 }
