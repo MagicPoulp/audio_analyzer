@@ -24,8 +24,9 @@ import 'package:intl/intl.dart';
 class CustomNumericComboChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;
+  final List<charts.TickSpec<num>> staticTicks;
 
-  CustomNumericComboChart(this.seriesList, {this.animate,});
+  CustomNumericComboChart(this.seriesList, {this.animate, this.staticTicks});
 
   factory CustomNumericComboChart.withFftAmplitudes(List<double> fftAmplitudes, samplingRate) {
     var numPoints = fftAmplitudes.length;
@@ -45,10 +46,28 @@ class CustomNumericComboChart extends StatelessWidget {
       data: fftAmplitudesTrimmed,
     )];
 
+    // Create the ticks to be used the domain axis.
+    var staticTicks = <charts.TickSpec<num>>[
+      new charts.TickSpec(
+        // Value must match the domain value.
+          111,
+          // Optional label for this tick, defaults to domain value if not set.
+          label: 'Year 2014',
+          // The styling for this tick.
+          style: new charts.TextStyleSpec(
+              color: new charts.Color(r: 0x4C, g: 0xAF, b: 0x50))),
+      // If no text style is specified - the style from renderSpec will be used
+      // if one is specified.
+      new charts.TickSpec(100),
+      new charts.TickSpec(111),
+      new charts.TickSpec(111),
+    ];
+
     return new CustomNumericComboChart(
       series,
       // Disable animations for image tests.
       animate: false,
+      staticTicks: staticTicks,
     );
   }
 
@@ -71,6 +90,7 @@ class CustomNumericComboChart extends StatelessWidget {
       seriesList,
       animate: animate,
       domainAxis: new charts.NumericAxisSpec(
+          tickProviderSpec: new charts.StaticNumericTickProviderSpec(staticTicks),
         /*
         tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredTickCount: 10),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
