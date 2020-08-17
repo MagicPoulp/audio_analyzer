@@ -52,6 +52,14 @@ class CustomNumericComboChart extends StatelessWidget {
     );
   }
 
+  /*
+  Compared to C4, the pitch of a note is given by 440*2^((n-9)/12)
+  https://en.wikipedia.org/wiki/Scientific_pitch_notation
+  However, most clarinets, and orchestras tune A4 to 442Hz.
+  SO the frequency is equal to 442 * 2^((n-9)/12)
+  It corresponds to the table below for 4420Hz.
+  https://pages.mtu.edu/~suits/notefreq442.html
+  */
   // https://google.github.io/charts/flutter/example/combo_charts/numeric_line_bar
   @override
   Widget build(BuildContext context) {
