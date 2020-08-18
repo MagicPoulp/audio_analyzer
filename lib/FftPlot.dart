@@ -46,22 +46,47 @@ class CustomNumericComboChart extends StatelessWidget {
       data: fftAmplitudesTrimmed,
     )];
 
+    /*
+    Compared to C4, the pitch of a note is given by 440*2^((n-9)/12)
+    https://en.wikipedia.org/wiki/Scientific_pitch_notation
+    However, most clarinets, and orchestras tune A4 to 442Hz.
+    SO the frequency is equal to 442 * 2^((n-9)/12)
+    It corresponds to the table below for 4420Hz.
+    https://pages.mtu.edu/~suits/notefreq442.html
+    */
+    num octaveStart = 3;
+    num octaveEnd = 9;
+    num diapason = 442;
+    // from C4 with n = 0:
+    var fn = (n) { return diapason * pow(2, (n-9)/12); };
+    var fnoct = (n, octave) { num index = (octave - 4) * 12 + n; return fn(index); };
     // Create the ticks to be used the domain axis.
-    var staticTicks = <charts.TickSpec<num>>[
-      new charts.TickSpec(
-        // Value must match the domain value.
-          111,
-          // Optional label for this tick, defaults to domain value if not set.
-          label: 'Year 2014',
-          // The styling for this tick.
-          style: new charts.TextStyleSpec(
-              color: new charts.Color(r: 0x4C, g: 0xAF, b: 0x50))),
-      // If no text style is specified - the style from renderSpec will be used
-      // if one is specified.
-      new charts.TickSpec(100),
-      new charts.TickSpec(111),
-      new charts.TickSpec(111),
-    ];
+    // the sharp character in UTF-16
+    // dart uses UTF-16 in strings by default
+    String s = String.fromCharCode(0x266F);
+    var mapIndexToLetter =
+      { 0:'C', 1:'C' + s, 2:'D', 3:'D' + s, 4:'E', 5:'F', 6:'F' + s, 7:'G', 8:'G' + s, 9:'A', 10:'A' + s, 11:'B' };
+    List<charts.TickSpec<num>> staticTicks = new List<charts.TickSpec<num>>();
+    // octave
+    for (var i = octaveStart; i < octaveEnd + 1; i += 1) {
+      // note index A, B, C, etc
+      for (var j = 0; j < 12; j += 1) {
+        String letter = mapIndexToLetter[j];
+        String note = letter + i.toString();
+        num frequency = fnoct(j, i);
+        staticTicks.add(
+          new charts.TickSpec(
+            // Value must match the domain value.
+            frequency,
+            // Optional label for this tick, defaults to domain value if not set.
+            label: note,
+            // The styling for this tick.
+            style: new charts.TextStyleSpec(
+                color: new charts.Color(r: 0x4C, g: 0xAF, b: 0x50))
+          ),
+        );
+      }
+    }
 
     return new CustomNumericComboChart(
       series,
@@ -71,14 +96,6 @@ class CustomNumericComboChart extends StatelessWidget {
     );
   }
 
-  /*
-  Compared to C4, the pitch of a note is given by 440*2^((n-9)/12)
-  https://en.wikipedia.org/wiki/Scientific_pitch_notation
-  However, most clarinets, and orchestras tune A4 to 442Hz.
-  SO the frequency is equal to 442 * 2^((n-9)/12)
-  It corresponds to the table below for 4420Hz.
-  https://pages.mtu.edu/~suits/notefreq442.html
-  */
   // https://google.github.io/charts/flutter/example/combo_charts/numeric_line_bar
   @override
   Widget build(BuildContext context) {
