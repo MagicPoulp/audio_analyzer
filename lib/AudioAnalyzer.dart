@@ -65,7 +65,7 @@ class AudioAnalyzer {
 
     // record for 6s after a delay of 5s
     autoRecordAfterDelay() async {
-        const delay1 = const Duration(seconds: 5);
+        const delay1 = const Duration(seconds: 10);
         const delay2 = const Duration(seconds: 6);
 
         void callback2() {
