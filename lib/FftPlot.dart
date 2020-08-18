@@ -67,6 +67,7 @@ class CustomNumericComboChart extends StatelessWidget {
     var mapIndexToLetter =
       { 0:'C', 1:'C' + s, 2:'D', 3:'D' + s, 4:'E', 5:'F', 6:'F' + s, 7:'G', 8:'G' + s, 9:'A', 10:'A' + s, 11:'B' };
     List<charts.TickSpec<num>> staticTicks = new List<charts.TickSpec<num>>();
+    var color =  new charts.Color(r: 0x00, g: 0x00, b: 0x00);
     // octave
     for (var i = octaveStart; i < octaveEnd + 1; i += 1) {
       // note index A, B, C, etc
@@ -82,10 +83,25 @@ class CustomNumericComboChart extends StatelessWidget {
             label: note,
             // The styling for this tick.
             style: new charts.TextStyleSpec(
-                color: new charts.Color(r: 0x4C, g: 0xAF, b: 0x50))
+                color: color
+            )
           ),
         );
       }
+    }
+    for (var i = 0; i < 25; i += 1) {
+      staticTicks.add(
+        new charts.TickSpec(
+          // Value must match the domain value.
+            1000 * i,
+            // Optional label for this tick, defaults to domain value if not set.
+            label: i == 0 ? i.toString() : i.toString() + 'K',
+            // The styling for this tick.
+            style: new charts.TextStyleSpec(
+                color: color
+            )
+        ),
+      );
     }
 
     return new CustomNumericComboChart(
