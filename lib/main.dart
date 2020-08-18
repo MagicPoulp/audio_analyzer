@@ -29,7 +29,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Record'),
+      home: MyHomePage(title: 'Audio analyzer'),
     );
   }
 }
@@ -132,6 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(fontSize: 18),
                 ),
             ),
+            DiapasonMyStatefulWidget(),
+            SamplingRateMyStatefulWidget(),
+            SizedBox(height: 10),
             new RaisedButton(
                 onPressed: _autoRecordAfterDelay,
                 child: new Text('Wait 5s and record for 6s'),
@@ -163,6 +166,111 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           ),
         ),
+    );
+  }
+}
+
+
+enum Diapason { scientific, orchestra }
+
+class DiapasonMyStatefulWidget extends StatefulWidget {
+  DiapasonMyStatefulWidget({Key key}) : super(key: key);
+
+  @override
+  _DiapasonMyStatefulWidgetState createState() => _DiapasonMyStatefulWidgetState();
+}
+
+// source for radio buttons:
+// https://api.flutter.dev/flutter/material/Radio-class.html
+class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
+  Diapason _diapason = Diapason.orchestra;
+
+  Widget build(BuildContext context) {
+    return Row(
+      // the spacing is broken due to the ListTile
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        SizedBox(width: 20),
+        Text('Diapason:', style: TextStyle(fontSize: 16)),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('440Hz'),
+          leading: Radio(
+            value: Diapason.scientific,
+            groupValue: _diapason,
+            onChanged: (Diapason value) {
+              setState(() {
+                _diapason = value;
+              });
+            },
+          ),
+        )),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('442Hz'),
+          leading: Radio(
+            value: Diapason.orchestra,
+            groupValue: _diapason,
+            onChanged: (Diapason value) {
+              setState(() {
+                _diapason = value;
+              });
+            },
+          ),
+        )),
+      ],
+    );
+  }
+}
+
+enum SamplingRate { rate16K, rate48K }
+
+class SamplingRateMyStatefulWidget extends StatefulWidget {
+  SamplingRateMyStatefulWidget({Key key}) : super(key: key);
+
+  @override
+  _SamplingRateMyStatefulWidget createState() => _SamplingRateMyStatefulWidget();
+}
+
+// source for radio buttons:
+// https://api.flutter.dev/flutter/material/Radio-class.html
+class _SamplingRateMyStatefulWidget extends State<SamplingRateMyStatefulWidget> {
+  SamplingRate _rate = SamplingRate.rate48K;
+
+  Widget build(BuildContext context) {
+    return Row(
+      // the spacing is broken due to the ListTile
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        SizedBox(width: 20),
+        Text('Sampling rate:', style: TextStyle(fontSize: 16)),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('16K'),
+          leading: Radio(
+            value: SamplingRate.rate16K,
+            groupValue: _rate,
+            onChanged: (SamplingRate value) {
+              setState(() {
+                _rate = value;
+              });
+            },
+          ),
+        )),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('48K'),
+          leading: Radio(
+            value: SamplingRate.rate48K,
+            groupValue: _rate,
+            onChanged: (SamplingRate value) {
+              setState(() {
+                _rate = value;
+              });
+            },
+          ),
+        )),
+      ],
     );
   }
 }
