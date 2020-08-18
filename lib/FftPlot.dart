@@ -122,9 +122,15 @@ class CustomNumericComboChart extends StatelessWidget {
     return new charts.LineChart(
       seriesList,
       animate: animate,
+      primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
+              NumberFormat.compact()
+          ),
+      ),
       domainAxis: new charts.NumericAxisSpec(
           tickProviderSpec: new charts.StaticNumericTickProviderSpec(staticTicks),
         /*
+        // we do not have place for the frequency grid but we did add a mark every 1K, see above in staticTicks
         tickProviderSpec: charts.BasicNumericTickProviderSpec(desiredTickCount: 10),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
             NumberFormat.compact()

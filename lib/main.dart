@@ -29,7 +29,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Record'),
+      home: MyHomePage(title: 'Audio analyzer'),
     );
   }
 }
@@ -57,14 +57,15 @@ class _MyHomePageState extends State<MyHomePage> {
   // since above 8K is very high
   // but 48K covers up to 20K which is the maximum that can be heard
   static int get samplingRate => 48000;
-  AudioAnalyzer _audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate);
+  static int get diapason => 442;
+  AudioAnalyzer audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate, diapason: diapason);
 
   void _autoRecordAfterDelay() {
-    _audioAnalyzer.autoRecordAfterDelay();
+    audioAnalyzer.autoRecordAfterDelay();
   }
 
   void _start() {
-    _audioAnalyzer.start();
+    audioAnalyzer.start();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -75,15 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _stop() {
-    _audioAnalyzer.stop();
+    audioAnalyzer.stop();
   }
 
   void _play() {
-    _audioAnalyzer.play();
+    audioAnalyzer.play();
   }
 
   void _analyze() async {
-    List<double> fftAmplitudes = await _audioAnalyzer.analyze();
+    List<double> fftAmplitudes = await audioAnalyzer.analyze();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes, samplingRate: samplingRate,)),
@@ -124,25 +125,41 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Record a sound and analyze its frequencies',
+            new Container(
+              margin: const EdgeInsets.only(bottom: 20.0),
+              child:
+                Text(
+                  'Record a sound and analyze its frequencies',
+                  style: TextStyle(fontSize: 18),
+                ),
             ),
+            DiapasonMyStatefulWidget(audioAnalyzer: audioAnalyzer),
+            SamplingRateMyStatefulWidget(audioAnalyzer: audioAnalyzer),
+            SizedBox(height: 10),
             new RaisedButton(
-              onPressed: _autoRecordAfterDelay,
-              child: new Text('Wait 5s and record 6s'),
+                onPressed: _autoRecordAfterDelay,
+                child: new Text('Wait 5s and record for 6s'),
             ),
-            new RaisedButton(
-              onPressed: _start,
-              child: new Text('Start'),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new RaisedButton(
+                  onPressed: _start,
+                  child: new Text('Start'),
+                ),
+                new RaisedButton(
+                  onPressed: _stop,
+                  child: new Text('Stop'),
+                ),
+                new RaisedButton(
+                  onPressed: _play,
+                  child: new Text('Play'),
+                ),
+
+              ]
             ),
-            new RaisedButton(
-              onPressed: _stop,
-              child: new Text('Stop'),
-            ),
-            new RaisedButton(
-              onPressed: _play,
-              child: new Text('Play'),
-            ),
+            SizedBox(height: 10),
             new RaisedButton(
               onPressed: _analyze,
               child: new Text('Analyze'),
@@ -150,6 +167,126 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           ),
         ),
+    );
+  }
+}
+
+
+enum Diapason { scientific, orchestra }
+
+class DiapasonMyStatefulWidget extends StatefulWidget {
+  final audioAnalyzer;
+
+  DiapasonMyStatefulWidget({Key key, this.audioAnalyzer}) : super(key: key);
+
+  @override
+  _DiapasonMyStatefulWidgetState createState() => _DiapasonMyStatefulWidgetState(audioAnalyzer: audioAnalyzer);
+}
+
+// source for radio buttons:
+// https://api.flutter.dev/flutter/material/Radio-class.html
+class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
+  final audioAnalyzer;
+  _DiapasonMyStatefulWidgetState({this.audioAnalyzer}) : super();
+
+  Diapason diapason = Diapason.orchestra;
+
+  Widget build(BuildContext context) {
+    return Row(
+      // the spacing is broken due to the ListTile
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        SizedBox(width: 20),
+        Text('Diapason:', style: TextStyle(fontSize: 16)),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('440Hz'),
+          leading: Radio(
+            value: Diapason.scientific,
+            groupValue: diapason,
+            onChanged: (Diapason value) {
+              setState(() {
+                diapason = value;
+                audioAnalyzer.diapason = 440;
+              });
+            },
+          ),
+        )),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('442Hz'),
+          leading: Radio(
+            value: Diapason.orchestra,
+            groupValue: diapason,
+            onChanged: (Diapason value) {
+              setState(() {
+                diapason = value;
+                audioAnalyzer.diapason = 442;
+              });
+            },
+          ),
+        )),
+      ],
+    );
+  }
+}
+
+enum SamplingRate { rate16K, rate48K }
+
+class SamplingRateMyStatefulWidget extends StatefulWidget {
+  final audioAnalyzer;
+
+  SamplingRateMyStatefulWidget({Key key, this.audioAnalyzer}) : super(key: key);
+
+  @override
+  _SamplingRateMyStatefulWidget createState() => _SamplingRateMyStatefulWidget();
+}
+
+// source for radio buttons:
+// https://api.flutter.dev/flutter/material/Radio-class.html
+class _SamplingRateMyStatefulWidget extends State<SamplingRateMyStatefulWidget> {
+  final audioAnalyzer;
+
+  _SamplingRateMyStatefulWidget({this.audioAnalyzer}) : super();
+
+  SamplingRate samplingRate = SamplingRate.rate48K;
+
+  Widget build(BuildContext context) {
+    return Row(
+      // the spacing is broken due to the ListTile
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        SizedBox(width: 20),
+        Text('Sampling rate:', style: TextStyle(fontSize: 16)),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('16K'),
+          leading: Radio(
+            value: SamplingRate.rate16K,
+            groupValue: samplingRate,
+            onChanged: (SamplingRate value) {
+              setState(() {
+                samplingRate = value;
+                audioAnalyzer.samplingRate = 16000;
+              });
+            },
+          ),
+        )),
+        Flexible(child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          title: const Text('48K'),
+          leading: Radio(
+            value: SamplingRate.rate48K,
+            groupValue: samplingRate,
+            onChanged: (SamplingRate value) {
+              setState(() {
+                samplingRate = value;
+                audioAnalyzer.samplingRate = 48000;
+              });
+            },
+          ),
+        )),
+      ],
     );
   }
 }
