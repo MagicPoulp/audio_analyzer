@@ -124,25 +124,38 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Record a sound and analyze its frequencies',
+            new Container(
+              margin: const EdgeInsets.only(bottom: 30.0),
+              child:
+                Text(
+                  'Record a sound and analyze its frequencies',
+                  style: TextStyle(fontSize: 18),
+                ),
             ),
             new RaisedButton(
-              onPressed: _autoRecordAfterDelay,
-              child: new Text('Wait 5s and record 6s'),
+                onPressed: _autoRecordAfterDelay,
+                child: new Text('Wait 5s and record for 6s'),
             ),
-            new RaisedButton(
-              onPressed: _start,
-              child: new Text('Start'),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new RaisedButton(
+                  onPressed: _start,
+                  child: new Text('Start'),
+                ),
+                new RaisedButton(
+                  onPressed: _stop,
+                  child: new Text('Stop'),
+                ),
+                new RaisedButton(
+                  onPressed: _play,
+                  child: new Text('Play'),
+                ),
+
+              ]
             ),
-            new RaisedButton(
-              onPressed: _stop,
-              child: new Text('Stop'),
-            ),
-            new RaisedButton(
-              onPressed: _play,
-              child: new Text('Play'),
-            ),
+            SizedBox(height: 10),
             new RaisedButton(
               onPressed: _analyze,
               child: new Text('Analyze'),
