@@ -29,7 +29,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Audio analyzer'),
+      home: MyHomePage(title: 'Audio analyzer, by Thierry Vilmart'),
     );
   }
 }
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(height: 10),
             new RaisedButton(
                 onPressed: _autoRecordAfterDelay,
-                child: new Text('Wait 5s and record for 6s'),
+                child: new Text('Wait 10s and record for 6s'),
             ),
             SizedBox(height: 10),
             Row(
