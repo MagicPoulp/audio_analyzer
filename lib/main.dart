@@ -57,14 +57,15 @@ class _MyHomePageState extends State<MyHomePage> {
   // since above 8K is very high
   // but 48K covers up to 20K which is the maximum that can be heard
   static int get samplingRate => 48000;
-  AudioAnalyzer _audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate);
+  static int get diapason => 442;
+  AudioAnalyzer audioAnalyzer = new AudioAnalyzer(samplingRate: samplingRate, diapason: diapason);
 
   void _autoRecordAfterDelay() {
-    _audioAnalyzer.autoRecordAfterDelay();
+    audioAnalyzer.autoRecordAfterDelay();
   }
 
   void _start() {
-    _audioAnalyzer.start();
+    audioAnalyzer.start();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -75,15 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _stop() {
-    _audioAnalyzer.stop();
+    audioAnalyzer.stop();
   }
 
   void _play() {
-    _audioAnalyzer.play();
+    audioAnalyzer.play();
   }
 
   void _analyze() async {
-    List<double> fftAmplitudes = await _audioAnalyzer.analyze();
+    List<double> fftAmplitudes = await audioAnalyzer.analyze();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FftPlotScreen(fftAmplitudes: fftAmplitudes, samplingRate: samplingRate,)),
@@ -125,15 +126,15 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Container(
-              margin: const EdgeInsets.only(bottom: 30.0),
+              margin: const EdgeInsets.only(bottom: 20.0),
               child:
                 Text(
                   'Record a sound and analyze its frequencies',
                   style: TextStyle(fontSize: 18),
                 ),
             ),
-            DiapasonMyStatefulWidget(),
-            SamplingRateMyStatefulWidget(),
+            DiapasonMyStatefulWidget(audioAnalyzer: audioAnalyzer),
+            SamplingRateMyStatefulWidget(audioAnalyzer: audioAnalyzer),
             SizedBox(height: 10),
             new RaisedButton(
                 onPressed: _autoRecordAfterDelay,
@@ -174,16 +175,21 @@ class _MyHomePageState extends State<MyHomePage> {
 enum Diapason { scientific, orchestra }
 
 class DiapasonMyStatefulWidget extends StatefulWidget {
-  DiapasonMyStatefulWidget({Key key}) : super(key: key);
+  final audioAnalyzer;
+
+  DiapasonMyStatefulWidget({Key key, this.audioAnalyzer}) : super(key: key);
 
   @override
-  _DiapasonMyStatefulWidgetState createState() => _DiapasonMyStatefulWidgetState();
+  _DiapasonMyStatefulWidgetState createState() => _DiapasonMyStatefulWidgetState(audioAnalyzer: audioAnalyzer);
 }
 
 // source for radio buttons:
 // https://api.flutter.dev/flutter/material/Radio-class.html
 class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
-  Diapason _diapason = Diapason.orchestra;
+  final audioAnalyzer;
+  _DiapasonMyStatefulWidgetState({this.audioAnalyzer}) : super();
+
+  Diapason diapason = Diapason.orchestra;
 
   Widget build(BuildContext context) {
     return Row(
@@ -197,10 +203,11 @@ class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
           title: const Text('440Hz'),
           leading: Radio(
             value: Diapason.scientific,
-            groupValue: _diapason,
+            groupValue: diapason,
             onChanged: (Diapason value) {
               setState(() {
-                _diapason = value;
+                diapason = value;
+                audioAnalyzer.diapason = 440;
               });
             },
           ),
@@ -210,10 +217,11 @@ class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
           title: const Text('442Hz'),
           leading: Radio(
             value: Diapason.orchestra,
-            groupValue: _diapason,
+            groupValue: diapason,
             onChanged: (Diapason value) {
               setState(() {
-                _diapason = value;
+                diapason = value;
+                audioAnalyzer.diapason = 442;
               });
             },
           ),
@@ -226,7 +234,9 @@ class _DiapasonMyStatefulWidgetState extends State<DiapasonMyStatefulWidget> {
 enum SamplingRate { rate16K, rate48K }
 
 class SamplingRateMyStatefulWidget extends StatefulWidget {
-  SamplingRateMyStatefulWidget({Key key}) : super(key: key);
+  final audioAnalyzer;
+
+  SamplingRateMyStatefulWidget({Key key, this.audioAnalyzer}) : super(key: key);
 
   @override
   _SamplingRateMyStatefulWidget createState() => _SamplingRateMyStatefulWidget();
@@ -235,7 +245,11 @@ class SamplingRateMyStatefulWidget extends StatefulWidget {
 // source for radio buttons:
 // https://api.flutter.dev/flutter/material/Radio-class.html
 class _SamplingRateMyStatefulWidget extends State<SamplingRateMyStatefulWidget> {
-  SamplingRate _rate = SamplingRate.rate48K;
+  final audioAnalyzer;
+
+  _SamplingRateMyStatefulWidget({this.audioAnalyzer}) : super();
+
+  SamplingRate samplingRate = SamplingRate.rate48K;
 
   Widget build(BuildContext context) {
     return Row(
@@ -249,10 +263,11 @@ class _SamplingRateMyStatefulWidget extends State<SamplingRateMyStatefulWidget> 
           title: const Text('16K'),
           leading: Radio(
             value: SamplingRate.rate16K,
-            groupValue: _rate,
+            groupValue: samplingRate,
             onChanged: (SamplingRate value) {
               setState(() {
-                _rate = value;
+                samplingRate = value;
+                audioAnalyzer.samplingRate = 16000;
               });
             },
           ),
@@ -262,10 +277,11 @@ class _SamplingRateMyStatefulWidget extends State<SamplingRateMyStatefulWidget> 
           title: const Text('48K'),
           leading: Radio(
             value: SamplingRate.rate48K,
-            groupValue: _rate,
+            groupValue: samplingRate,
             onChanged: (SamplingRate value) {
               setState(() {
-                _rate = value;
+                samplingRate = value;
+                audioAnalyzer.samplingRate = 48000;
               });
             },
           ),

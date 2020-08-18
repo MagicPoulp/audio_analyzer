@@ -19,6 +19,7 @@ typedef NativeFFTFunction = Function(ffi.Pointer<ffi.Int16>, int);
 class AudioAnalyzer {
 
     int samplingRate;
+    int diapason;
     var recorder;
     String fileName;
     var assetsAudioPlayer;
@@ -28,8 +29,9 @@ class AudioAnalyzer {
     Timer timer1;
     Timer timer2;
 
-    AudioAnalyzer({samplingRate,}) {
+    AudioAnalyzer({samplingRate, diapason}) {
         this.samplingRate = samplingRate;
+        this.diapason = diapason;
         // we use the C library FFTW because it is a quality library without errors, and
         // because it works if the length of the input is not equal to a power of 2
         // https://flutter.dev/docs/development/platform-integration/c-interop
