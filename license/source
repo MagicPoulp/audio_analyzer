@@ -1,0 +1,11 @@
+The GPL license of fftw3 requires to distribute the source code
+of the totality of any derived work.
+
+source of the derived work:
+https://github.com/MagicPoulp/audio_analyzer
+
+fftw3 was not modified. It is just built and linked.
+The version fftw-3.3.8 was used.
+
+source of fftw3:
+https://github.com/FFTW/fftw3
