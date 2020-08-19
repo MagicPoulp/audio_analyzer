@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.prototype.audio_analyzer"
+        applicationId "com.magicpoulp.audio_analyzer"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()

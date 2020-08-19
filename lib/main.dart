@@ -12,7 +12,7 @@ class AudioAnalyzerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Audio analyzer',
+      title: 'Audio Analyzer',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -29,7 +29,7 @@ class AudioAnalyzerApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Audio analyzer, by Thierry Vilmart'),
+      home: MyHomePage(title: 'Audio Analyzer - by Thierry Vilmart'),
     );
   }
 }
