@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="audio_analyzer"
+        android:label="Audio Analyzer"
         android:icon="@mipmap/ic_launcher">
         <!--
         see FAQ:
