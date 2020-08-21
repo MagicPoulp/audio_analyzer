@@ -13,6 +13,7 @@ import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
 // https://pub.dev/packages/flutter_audiorecorder
 import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 typedef NativeFFTFunction = Function(ffi.Pointer<ffi.Int16>, int);
 
@@ -46,8 +47,15 @@ class AudioAnalyzer {
     ffi.Int32 Function(ffi.Pointer<ffi.Int16>, ffi.Int32, ffi.Pointer<ffi.Float>)
     >>("transform")
     .asFunction();
+
+    sendPermissionRequests();
   }
 
+  void sendPermissionRequests() async {
+    await Permission.storage.request();
+    await Permission.microphone.request();
+  }
+  
   void dispose() {
     if (data != null) {
       ffi.free(data);
