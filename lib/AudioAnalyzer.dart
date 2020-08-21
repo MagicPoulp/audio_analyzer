@@ -76,6 +76,9 @@ class AudioAnalyzer {
             timer1 = new Timer(delay2, callback2);
         }
         timer2 = new Timer(delay1, callback1);
+        if (fileName == null) {
+            await makeFile();
+        }
     }
 
     start() async {
@@ -112,6 +115,9 @@ class AudioAnalyzer {
     }
 
     stop() async {
+        if (fileName == null) {
+            await makeFile();
+        }
         if (recorder != null) {
             var result = await recorder.stop();
             print(result.path);
@@ -125,6 +131,9 @@ class AudioAnalyzer {
     // saying that the wav block size is 1 instead of 2
     // the block size represents the number of channels
     play() async {
+        if (fileName == null) {
+            await makeFile();
+        }
         assetsAudioPlayer = AssetsAudioPlayer();
 
         assetsAudioPlayer.open(
@@ -136,13 +145,14 @@ class AudioAnalyzer {
 
 
     analyze() async {
+        if (fileName == null) {
+            await makeFile();
+        }
         // Set landscape orientation
         SystemChrome.setPreferredOrientations([
             DeviceOrientation.landscapeRight,
         ]);
-        if (fileName == null) {
-            await makeFile();
-        }
+
         var fft = await computeFFT();
         List<double> amplitudes = await makeAmplitudes(fft);
         return amplitudes;
